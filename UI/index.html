@@ -1,0 +1,1039 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>宝宝喂养记录小程序 UI 设计稿</title>
+  <style>
+    :root {
+      --paper: #f7f7f2;
+      --surface: #fffef9;
+      --ink: #20211f;
+      --muted: #74766f;
+      --hairline: #deded5;
+      --soft: #eeeee7;
+      --mint: #dceee5;
+      --mint-ink: #1e6b4f;
+      --sky: #dfeaf7;
+      --sky-ink: #2d5f95;
+      --amber: #f3d98b;
+      --amber-ink: #795c00;
+      --coral: #f3d0c7;
+      --coral-ink: #9a3c28;
+      --shadow: 0 18px 60px rgba(32, 33, 31, 0.13);
+      --radius: 8px;
+      font-family: "Avenir Next", "Gill Sans", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      color: var(--ink);
+      background: var(--paper);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-width: 360px;
+      background:
+        linear-gradient(90deg, rgba(32, 33, 31, 0.04) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(32, 33, 31, 0.035) 1px, transparent 1px),
+        var(--paper);
+      background-size: 36px 36px;
+    }
+
+    .board {
+      max-width: 1540px;
+      margin: 0 auto;
+      padding: 44px 34px 64px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(280px, 1fr) minmax(280px, 460px);
+      gap: 28px;
+      align-items: end;
+      margin-bottom: 38px;
+    }
+
+    .kicker {
+      width: max-content;
+      padding: 5px 8px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      font-size: 12px;
+      line-height: 1;
+    }
+
+    h1 {
+      margin: 18px 0 10px;
+      max-width: 760px;
+      font-family: "Songti SC", "STSong", "Noto Serif CJK SC", serif;
+      font-size: 52px;
+      line-height: 1.04;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 660px;
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+      line-height: 1.8;
+    }
+
+    .style-card {
+      border: 1px solid var(--ink);
+      background: var(--surface);
+      box-shadow: 8px 8px 0 var(--ink);
+      padding: 18px;
+    }
+
+    .style-card h2 {
+      margin: 0 0 14px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .tokens {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+
+    .token {
+      min-height: 54px;
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      padding: 8px;
+      font-size: 11px;
+      display: flex;
+      align-items: end;
+      color: var(--ink);
+    }
+
+    .token.ink { background: var(--ink); color: #fffef9; }
+    .token.mint { background: var(--mint); }
+    .token.sky { background: var(--sky); }
+    .token.amber { background: var(--amber); }
+
+    .screens {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(280px, 1fr));
+      gap: 24px;
+      align-items: start;
+    }
+
+    .screen-wrap {
+      display: grid;
+      gap: 12px;
+    }
+
+    .caption {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .caption strong {
+      color: var(--ink);
+      font-size: 15px;
+    }
+
+    .phone {
+      width: 100%;
+      max-width: 390px;
+      aspect-ratio: 390 / 844;
+      margin: 0 auto;
+      border: 1.5px solid var(--ink);
+      border-radius: 32px;
+      background: var(--surface);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .phone::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      width: 82px;
+      height: 24px;
+      transform: translateX(-50%);
+      background: var(--ink);
+      border-radius: 999px;
+      z-index: 5;
+    }
+
+    .status {
+      height: 48px;
+      padding: 14px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .appbar {
+      padding: 18px 22px 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .appbar h2 {
+      margin: 0;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 27px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .age {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .icon-btn,
+    .pill-btn,
+    .primary-btn {
+      border: 1px solid var(--ink);
+      background: var(--surface);
+      color: var(--ink);
+      font-family: inherit;
+      font-weight: 700;
+    }
+
+    .icon-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+    }
+
+    .content {
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+      padding: 4px 18px 96px;
+    }
+
+    .hero-metric {
+      margin: 8px 4px 14px;
+      padding: 22px 0 20px;
+      border-top: 1.5px solid var(--ink);
+      border-bottom: 1.5px solid var(--ink);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 16px;
+      align-items: end;
+    }
+
+    .metric-value {
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 60px;
+      line-height: 0.95;
+      font-weight: 600;
+      letter-spacing: 0;
+    }
+
+    .metric-value small {
+      font-family: inherit;
+      font-size: 20px;
+    }
+
+    .label {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 26px;
+      padding: 0 9px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      background: var(--mint);
+      color: var(--mint-ink);
+      white-space: nowrap;
+    }
+
+    .badge.warn {
+      background: var(--amber);
+      color: var(--amber-ink);
+    }
+
+    .badge.danger {
+      background: var(--coral);
+      color: var(--coral-ink);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .tile,
+    .panel,
+    .record-row,
+    .input-row {
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      background: #fffefb;
+    }
+
+    .tile {
+      min-height: 86px;
+      padding: 13px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .tile strong {
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    .panel {
+      margin-top: 12px;
+      padding: 14px;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .panel-title {
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+    }
+
+    .quick {
+      min-height: 70px;
+      border: 1px solid var(--ink);
+      border-radius: var(--radius);
+      background: var(--surface);
+      display: grid;
+      place-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .quick span {
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid var(--ink);
+      display: grid;
+      place-items: center;
+      line-height: 1;
+      background: var(--mint);
+    }
+
+    .quick:nth-child(2) span { background: var(--sky); }
+    .quick:nth-child(3) span { background: var(--amber); }
+
+    .risk-line {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 10px;
+      align-items: center;
+      font-size: 13px;
+      line-height: 1.45;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--amber);
+    }
+
+    .tabbar {
+      position: absolute;
+      left: 12px;
+      right: 12px;
+      bottom: 12px;
+      height: 70px;
+      border: 1px solid var(--ink);
+      border-radius: 22px;
+      background: rgba(255, 254, 249, 0.94);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+      padding: 7px;
+      backdrop-filter: blur(14px);
+    }
+
+    .tab {
+      display: grid;
+      place-items: center;
+      gap: 4px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+    }
+
+    .tab i {
+      width: 22px;
+      height: 22px;
+      border: 1px solid currentColor;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      font-style: normal;
+      font-size: 12px;
+    }
+
+    .tab.active {
+      color: var(--ink);
+      font-weight: 800;
+    }
+
+    .tab.active i {
+      background: var(--ink);
+      color: var(--surface);
+    }
+
+    .segmented {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      padding: 3px;
+      gap: 3px;
+      background: var(--soft);
+    }
+
+    .segmented.two {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .segmented button {
+      min-height: 32px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      font-family: inherit;
+      font-weight: 800;
+      color: var(--muted);
+    }
+
+    .segmented .active {
+      background: var(--surface);
+      color: var(--ink);
+      border: 1px solid var(--ink);
+    }
+
+    .record-row {
+      min-height: 70px;
+      padding: 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .record-main {
+      display: grid;
+      gap: 5px;
+      min-width: 0;
+    }
+
+    .record-title {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .record-sub {
+      color: var(--muted);
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .amount {
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 24px;
+      font-weight: 600;
+    }
+
+    .sheet {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      padding: 18px 18px 88px;
+      border-top: 1.5px solid var(--ink);
+      background: var(--surface);
+      box-shadow: 0 -14px 40px rgba(32, 33, 31, 0.11);
+      border-radius: 24px 24px 0 0;
+    }
+
+    .sheet h3 {
+      margin: 0 0 14px;
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .input-row {
+      min-height: 58px;
+      margin-top: 10px;
+      padding: 10px 12px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .input-row strong {
+      font-size: 15px;
+    }
+
+    .input-row span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      min-height: 32px;
+      padding: 0 12px;
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      background: var(--surface);
+      font-size: 13px;
+      font-weight: 800;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .chip.active {
+      background: var(--ink);
+      color: var(--surface);
+    }
+
+    .primary-btn {
+      width: 100%;
+      min-height: 52px;
+      margin-top: 14px;
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--surface);
+      font-size: 16px;
+    }
+
+    .chart {
+      width: 100%;
+      aspect-ratio: 330 / 184;
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius);
+      background:
+        linear-gradient(0deg, transparent 23%, rgba(32, 33, 31, 0.08) 24%, transparent 25%, transparent 49%, rgba(32, 33, 31, 0.08) 50%, transparent 51%, transparent 74%, rgba(32, 33, 31, 0.08) 75%, transparent 76%),
+        #fffefb;
+      overflow: hidden;
+    }
+
+    .chart svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .legend {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .legend i {
+      width: 10px;
+      height: 10px;
+      border: 1px solid var(--ink);
+      display: inline-block;
+      border-radius: 50%;
+    }
+
+    .profile-hero {
+      margin: 8px 4px 12px;
+      min-height: 150px;
+      border: 1.5px solid var(--ink);
+      border-radius: 22px;
+      padding: 18px;
+      display: grid;
+      align-content: space-between;
+      background:
+        linear-gradient(135deg, rgba(220, 238, 229, 0.9), rgba(255, 254, 249, 0.88) 48%, rgba(243, 217, 139, 0.7));
+    }
+
+    .baby-name {
+      font-family: "Songti SC", "STSong", serif;
+      font-size: 40px;
+      line-height: 1;
+      font-weight: 600;
+    }
+
+    .info-list {
+      display: grid;
+      gap: 9px;
+    }
+
+    .info-item {
+      min-height: 48px;
+      border-bottom: 1px solid var(--hairline);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: 12px;
+      font-size: 14px;
+    }
+
+    .info-item span,
+    .form-value {
+      color: var(--muted);
+    }
+
+    .notice {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-left: 3px solid var(--ink);
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.55;
+    }
+
+    .footnote {
+      margin: 34px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    @media (max-width: 1380px) {
+      .screens {
+        grid-template-columns: repeat(3, minmax(280px, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .board {
+        padding: 28px 16px 46px;
+      }
+
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 40px;
+      }
+
+      .screens {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="board">
+    <section class="hero">
+      <div>
+        <div class="kicker">Mini Program UI / Minimal v1</div>
+        <h1>宝宝喂养记录，一眼看清今天。</h1>
+        <p class="lead">给新生儿家庭自用的小程序界面稿。重点是半夜也能快速操作、风险提示克制清楚、趋势足够直观，保留未来同步和多宝宝扩展的空间。</p>
+      </div>
+      <aside class="style-card">
+        <h2>视觉基调</h2>
+        <div class="tokens">
+          <div class="token ink">ink<br>#20211F</div>
+          <div class="token mint">milk ok</div>
+          <div class="token sky">trend</div>
+          <div class="token amber">watch</div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="screens" aria-label="小程序界面设计稿">
+      <article class="screen-wrap">
+        <div class="caption"><strong>01 今日</strong><span>核心状态 + 快捷记录</span></div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>100%</span></div>
+          <header class="appbar">
+            <div>
+              <h2>今日</h2>
+              <div class="age">崽崽 · 第 18 天</div>
+            </div>
+            <button class="icon-btn" aria-label="设置">·</button>
+          </header>
+          <div class="content">
+            <section class="hero-metric">
+              <div>
+                <div class="label">今日总奶量</div>
+                <div class="metric-value">520<small> ml</small></div>
+              </div>
+              <span class="badge">达标</span>
+            </section>
+            <div class="grid-2">
+              <div class="tile">
+                <span class="label">喂养次数</span>
+                <strong>7</strong>
+              </div>
+              <div class="tile">
+                <span class="label">建议区间</span>
+                <strong>470-620</strong>
+              </div>
+              <div class="tile">
+                <span class="label">尿尿</span>
+                <strong>6 次</strong>
+              </div>
+              <div class="tile">
+                <span class="label">便便</span>
+                <strong>2 次</strong>
+              </div>
+            </div>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">最近黄疸</div>
+                <span class="badge warn">低危</span>
+              </div>
+              <div class="risk-line">
+                <i class="dot"></i>
+                <span>平均 8.6 mg/dL · 3 小时前</span>
+                <strong>+0.4</strong>
+              </div>
+              <div class="notice">本结果仅用于家庭记录和观察，不能替代医生判断。</div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">快速记录</div>
+              </div>
+              <div class="quick-actions">
+                <div class="quick"><span>+</span>喂奶</div>
+                <div class="quick"><span>+</span>尿便</div>
+                <div class="quick"><span>+</span>黄疸</div>
+              </div>
+            </section>
+          </div>
+          <nav class="tabbar" aria-label="底部导航">
+            <div class="tab active"><i>今</i><span>今日</span></div>
+            <div class="tab"><i>记</i><span>记录</span></div>
+            <div class="tab"><i>趋</i><span>趋势</span></div>
+            <div class="tab"><i>宝</i><span>宝宝</span></div>
+          </nav>
+        </div>
+      </article>
+
+      <article class="screen-wrap">
+        <div class="caption"><strong>02 记录</strong><span>分段入口 + 倒序历史</span></div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>100%</span></div>
+          <header class="appbar">
+            <div>
+              <h2>记录</h2>
+              <div class="age">今天 · 5 月 21 日</div>
+            </div>
+            <button class="icon-btn" aria-label="新增">+</button>
+          </header>
+          <div class="content">
+            <div class="segmented">
+              <button class="active">喂养</button>
+              <button>尿便</button>
+              <button>黄疸</button>
+            </div>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-title">今日喂养</div>
+                  <div class="label">母乳 240 ml · 奶粉 280 ml</div>
+                </div>
+                <span class="badge">7 次</span>
+              </div>
+              <div class="record-row">
+                <div class="record-main">
+                  <div class="record-title">18:20 奶粉</div>
+                  <div class="record-sub">状态良好，无备注</div>
+                </div>
+                <div class="amount">90</div>
+              </div>
+              <div class="record-row">
+                <div class="record-main">
+                  <div class="record-title">15:10 母乳</div>
+                  <div class="record-sub">估算记录</div>
+                </div>
+                <div class="amount">70</div>
+              </div>
+              <div class="record-row">
+                <div class="record-main">
+                  <div class="record-title">12:05 奶粉</div>
+                  <div class="record-sub">吃完后拍嗝</div>
+                </div>
+                <div class="amount">80</div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">尿便摘要</div>
+                <span class="badge warn">关注颜色 0</span>
+              </div>
+              <div class="grid-2">
+                <div class="tile"><span class="label">尿量</span><strong>中</strong></div>
+                <div class="tile"><span class="label">颜色</span><strong>黄色</strong></div>
+              </div>
+            </section>
+          </div>
+          <nav class="tabbar">
+            <div class="tab"><i>今</i><span>今日</span></div>
+            <div class="tab active"><i>记</i><span>记录</span></div>
+            <div class="tab"><i>趋</i><span>趋势</span></div>
+            <div class="tab"><i>宝</i><span>宝宝</span></div>
+          </nav>
+        </div>
+      </article>
+
+      <article class="screen-wrap">
+        <div class="caption"><strong>03 记喂奶</strong><span>底部表单，适合单手</span></div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>100%</span></div>
+          <header class="appbar">
+            <div>
+              <h2>新增</h2>
+              <div class="age">默认当前时间</div>
+            </div>
+            <button class="icon-btn" aria-label="关闭">×</button>
+          </header>
+          <div class="content">
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">最近一次</div>
+                <span class="label">2 小时前</span>
+              </div>
+              <div class="risk-line">
+                <i class="dot"></i>
+                <span>15:10 母乳 70 ml</span>
+                <strong>70</strong>
+              </div>
+            </section>
+          </div>
+          <section class="sheet">
+            <h3>记喂奶</h3>
+            <div class="segmented two">
+              <button class="active">母乳</button>
+              <button>奶粉</button>
+            </div>
+            <div class="chips">
+              <span class="chip">30 ml</span>
+              <span class="chip active">60 ml</span>
+              <span class="chip">90 ml</span>
+              <span class="chip">120 ml</span>
+            </div>
+            <div class="input-row">
+              <div>
+                <strong>奶量</strong>
+                <div class="label">支持手动输入</div>
+              </div>
+              <span class="form-value">60 ml</span>
+            </div>
+            <div class="input-row">
+              <div>
+                <strong>喂养时间</strong>
+                <div class="label">2026-05-21</div>
+              </div>
+              <span class="form-value">18:32</span>
+            </div>
+            <div class="input-row">
+              <strong>备注</strong>
+              <span class="form-value">可选</span>
+            </div>
+            <button class="primary-btn">保存记录</button>
+          </section>
+          <nav class="tabbar">
+            <div class="tab"><i>今</i><span>今日</span></div>
+            <div class="tab active"><i>记</i><span>记录</span></div>
+            <div class="tab"><i>趋</i><span>趋势</span></div>
+            <div class="tab"><i>宝</i><span>宝宝</span></div>
+          </nav>
+        </div>
+      </article>
+
+      <article class="screen-wrap">
+        <div class="caption"><strong>04 趋势</strong><span>奶量、尿便、黄疸</span></div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>100%</span></div>
+          <header class="appbar">
+            <div>
+              <h2>趋势</h2>
+              <div class="age">近 7 天</div>
+            </div>
+            <button class="icon-btn" aria-label="筛选">⌄</button>
+          </header>
+          <div class="content">
+            <div class="segmented">
+              <button class="active">7 天</button>
+              <button>14 天</button>
+              <button>30 天</button>
+            </div>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-title">奶量趋势</div>
+                  <div class="label">含建议区间参考线</div>
+                </div>
+                <span class="badge">稳定</span>
+              </div>
+              <div class="chart">
+                <svg viewBox="0 0 330 184" role="img" aria-label="奶量趋势图">
+                  <rect x="0" y="70" width="330" height="54" fill="#dceee5" opacity="0.7"></rect>
+                  <path d="M22 132 L70 116 L118 122 L166 89 L214 96 L262 78 L310 84" fill="none" stroke="#20211f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <path d="M22 144 L70 136 L118 132 L166 118 L214 120 L262 108 L310 112" fill="none" stroke="#2d5f95" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 6"></path>
+                  <g fill="#fffef9" stroke="#20211f" stroke-width="2">
+                    <circle cx="22" cy="132" r="4"></circle>
+                    <circle cx="70" cy="116" r="4"></circle>
+                    <circle cx="118" cy="122" r="4"></circle>
+                    <circle cx="166" cy="89" r="4"></circle>
+                    <circle cx="214" cy="96" r="4"></circle>
+                    <circle cx="262" cy="78" r="4"></circle>
+                    <circle cx="310" cy="84" r="4"></circle>
+                  </g>
+                </svg>
+              </div>
+              <div class="legend">
+                <span><i style="background:#20211f"></i>总奶量</span>
+                <span><i style="background:#dceee5"></i>建议区间</span>
+                <span><i style="background:#dfeaf7"></i>次数</span>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div class="panel-title">黄疸</div>
+                <span class="badge warn">低危</span>
+              </div>
+              <div class="chart">
+                <svg viewBox="0 0 330 184" role="img" aria-label="黄疸趋势图">
+                  <rect x="0" y="0" width="330" height="54" fill="#f3d0c7" opacity="0.55"></rect>
+                  <rect x="0" y="54" width="330" height="56" fill="#f3d98b" opacity="0.5"></rect>
+                  <path d="M24 126 L78 118 L132 98 L186 102 L240 90 L296 84" fill="none" stroke="#20211f" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"></path>
+                  <g fill="#fffef9" stroke="#20211f" stroke-width="2">
+                    <circle cx="24" cy="126" r="4"></circle>
+                    <circle cx="78" cy="118" r="4"></circle>
+                    <circle cx="132" cy="98" r="4"></circle>
+                    <circle cx="186" cy="102" r="4"></circle>
+                    <circle cx="240" cy="90" r="4"></circle>
+                    <circle cx="296" cy="84" r="4"></circle>
+                  </g>
+                </svg>
+              </div>
+            </section>
+          </div>
+          <nav class="tabbar">
+            <div class="tab"><i>今</i><span>今日</span></div>
+            <div class="tab"><i>记</i><span>记录</span></div>
+            <div class="tab active"><i>趋</i><span>趋势</span></div>
+            <div class="tab"><i>宝</i><span>宝宝</span></div>
+          </nav>
+        </div>
+      </article>
+
+      <article class="screen-wrap">
+        <div class="caption"><strong>05 宝宝</strong><span>档案 + 风险基础字段</span></div>
+        <div class="phone">
+          <div class="status"><span>9:41</span><span>100%</span></div>
+          <header class="appbar">
+            <div>
+              <h2>宝宝</h2>
+              <div class="age">单宝宝档案</div>
+            </div>
+            <button class="icon-btn" aria-label="编辑">✎</button>
+          </header>
+          <div class="content">
+            <section class="profile-hero">
+              <div>
+                <div class="label">昵称</div>
+                <div class="baby-name">崽崽</div>
+              </div>
+              <div class="grid-2">
+                <span class="badge">第 18 天</span>
+                <span class="badge warn">有黄疸风险因素</span>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="info-list">
+                <div class="info-item"><strong>出生日期</strong><span>2026-05-03</span></div>
+                <div class="info-item"><strong>出生时间</strong><span>07:42</span></div>
+                <div class="info-item"><strong>当前体重</strong><span>3.42 kg</span></div>
+                <div class="info-item"><strong>出生孕周</strong><span>39 周</span></div>
+                <div class="info-item"><strong>出生体重</strong><span>3.18 kg</span></div>
+                <div class="info-item"><strong>备注</strong><span>家庭自用</span></div>
+              </div>
+            </section>
+            <section class="panel">
+              <div class="panel-head">
+                <div>
+                  <div class="panel-title">判断依赖</div>
+                  <div class="label">体重、日龄、孕周、风险因素</div>
+                </div>
+                <span class="badge">完整</span>
+              </div>
+              <div class="notice">缺少关键字段时，奶量状态或黄疸风险显示为无法判断。</div>
+            </section>
+          </div>
+          <nav class="tabbar">
+            <div class="tab"><i>今</i><span>今日</span></div>
+            <div class="tab"><i>记</i><span>记录</span></div>
+            <div class="tab"><i>趋</i><span>趋势</span></div>
+            <div class="tab active"><i>宝</i><span>宝宝</span></div>
+          </nav>
+        </div>
+      </article>
+    </section>
+
+    <p class="footnote">设计文件可作为小程序页面拆分依据：底部 Tab 对应今日、记录、趋势、宝宝；表单优先使用底部 Sheet；健康相关提示统一保持克制，不给诊断结论。</p>
+  </main>
+</body>
+</html>
