@@ -1,0 +1,60 @@
+<view class="page">
+  <view class="appbar">
+    <view>
+      <text class="app-title">今日</text>
+      <text class="app-subtitle">宝宝 · 等待档案</text>
+    </view>
+    <view class="icon-btn">·</view>
+  </view>
+
+  <view class="hero-metric">
+    <view>
+      <text class="label">今日总奶量</text>
+      <view class="metric-value">0<text> ml</text></view>
+    </view>
+    <text class="badge warn">无法判断</text>
+  </view>
+
+  <view class="grid-2">
+    <view class="tile">
+      <text class="label">喂养次数</text>
+      <text class="tile-value">0</text>
+    </view>
+    <view class="tile">
+      <text class="label">建议区间</text>
+      <text class="tile-value">--</text>
+    </view>
+    <view class="tile">
+      <text class="label">尿尿</text>
+      <text class="tile-value">0 次</text>
+    </view>
+    <view class="tile">
+      <text class="label">便便</text>
+      <text class="tile-value">0 次</text>
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <text class="panel-title">最近黄疸</text>
+      <text class="badge warn">无法判断</text>
+    </view>
+    <view class="risk-line">
+      <view class="dot"></view>
+      <text>暂无黄疸记录</text>
+      <text class="risk-value">--</text>
+    </view>
+    <view class="notice">本结果仅用于家庭记录和观察，不能替代医生判断。</view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <text class="panel-title">快速记录</text>
+    </view>
+    <view class="quick-actions">
+      <view class="quick"><text>+</text><text>喂奶</text></view>
+      <view class="quick sky"><text>+</text><text>尿便</text></view>
+      <view class="quick amber"><text>+</text><text>黄疸</text></view>
+    </view>
+  </view>
+</view>

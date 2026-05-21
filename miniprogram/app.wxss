@@ -1,0 +1,122 @@
+page {
+  min-height: 100%;
+  background-color: #F7F7F2;
+  background-image:
+    linear-gradient(90deg, rgba(32, 33, 31, 0.035) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(32, 33, 31, 0.03) 1px, transparent 1px);
+  background-size: 72rpx 72rpx;
+  color: #20211F;
+  font-family: "Avenir Next", "Gill Sans", "PingFang SC", sans-serif;
+}
+
+button {
+  border-radius: 8px;
+}
+
+.appbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  padding: 10rpx 8rpx 18rpx;
+}
+
+.app-title {
+  display: block;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 54rpx;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.app-subtitle {
+  display: block;
+  margin-top: 14rpx;
+  color: #74766F;
+  font-size: 24rpx;
+}
+
+.icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 72rpx;
+  height: 72rpx;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 2rpx solid #20211F;
+  border-radius: 999px;
+  background: #FFFEF9;
+  color: #20211F;
+  font-size: 34rpx;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.icon-btn::after {
+  border: 0;
+}
+
+.panel {
+  margin-top: 24rpx;
+  padding: 28rpx;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.panel-title {
+  display: block;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.label {
+  display: block;
+  color: #74766F;
+  font-size: 24rpx;
+  line-height: 1.4;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 52rpx;
+  padding: 0 18rpx;
+  border: 2rpx solid #20211F;
+  border-radius: 999px;
+  background: #DCEEE5;
+  color: #1E6B4F;
+  font-size: 24rpx;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.badge.warn {
+  background: #F3D98B;
+  color: #795C00;
+}
+
+.badge.danger {
+  background: #F3D0C7;
+  color: #9A3C28;
+}
+
+.notice {
+  margin-top: 20rpx;
+  padding: 20rpx 24rpx;
+  border-left: 6rpx solid #20211F;
+  background: #EEEEE7;
+  color: #74766F;
+  font-size: 24rpx;
+  line-height: 1.55;
+}

@@ -1,0 +1,109 @@
+<view class="page">
+  <view class="appbar">
+    <view>
+      <text class="app-title">宝宝</text>
+      <text class="app-subtitle">单宝宝档案</text>
+    </view>
+  </view>
+
+  <view class="profile-hero">
+    <view class="profile-top">
+      <label class="name-field">
+        <text class="label">昵称</text>
+        <input class="baby-name-input" type="nickname" value="{{form.nickname}}" data-field="nickname" bindinput="onFieldInput" placeholder="宝宝" />
+      </label>
+      <button class="avatar-btn" open-type="chooseAvatar" hover-class="none" bindchooseavatar="onChooseAvatar">
+        <image wx:if="{{form.avatarUrl}}" class="avatar-image" src="{{form.avatarUrl}}" mode="aspectFill" />
+        <image wx:else class="avatar-image" src="/assets/default-baby-avatar.png" mode="aspectFill" />
+      </button>
+    </view>
+    <view class="profile-badges">
+      <text class="badge">{{status && status.age.canCalculate ? '第 ' + status.age.dayAge + ' 天' : '无法计算日龄'}}</text>
+      <text class="badge warn">{{form.hasJaundiceRiskFactors ? '有黄疸风险因素' : '无风险因素记录'}}</text>
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="info-list">
+      <view class="info-item">
+        <text>出生日期</text>
+        <picker mode="date" value="{{form.birthDate}}" bindchange="onDateChange">
+          <view class="info-control">{{form.birthDate || '选择日期'}}</view>
+        </picker>
+      </view>
+      <view class="info-item">
+        <text>出生时间</text>
+        <picker mode="time" value="{{form.birthTime}}" bindchange="onTimeChange">
+          <view class="info-control">{{form.birthTime || '选择时间'}}</view>
+        </picker>
+      </view>
+      <view class="info-item">
+        <text>当前体重</text>
+        <view class="inline-control">
+          <input class="info-input" type="digit" value="{{form.currentWeightKg}}" data-field="currentWeightKg" bindinput="onFieldInput" placeholder="0" />
+          <text>kg</text>
+        </view>
+      </view>
+      <view class="info-item">
+        <text>出生孕周</text>
+        <view class="inline-control">
+          <input class="info-input" type="digit" value="{{form.gestationalWeeks}}" data-field="gestationalWeeks" bindinput="onFieldInput" placeholder="0" />
+          <text>周</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">判断依赖</text>
+        <text class="label">体重、日龄、孕周、风险因素</text>
+      </view>
+      <view class="badge status-badge {{status && status.age.canCalculate && status.feeding.canEstimateMilkStatus && status.jaundice.canAssessRisk ? '' : 'warn'}}">
+        <text class="status-badge-text">{{status && status.age.canCalculate && status.feeding.canEstimateMilkStatus && status.jaundice.canAssessRisk ? '完整' : '待补全'}}</text>
+      </view>
+    </view>
+    <view class="notice">缺少关键字段时，奶量状态或黄疸风险显示为无法判断。</view>
+  </view>
+
+  <view class="panel form">
+    <view class="panel-head">
+      <text class="panel-title">补充信息</text>
+    </view>
+
+    <view class="field">
+      <text class="label">性别</text>
+      <picker range="{{genderOptions}}" value="{{genderIndex}}" bindchange="onGenderChange">
+        <view class="picker">{{genderOptions[genderIndex]}}</view>
+      </picker>
+    </view>
+
+    <label class="field compact-field">
+      <text class="label">出生时体重（可选）</text>
+      <view class="compact-input-row">
+        <input class="compact-input" type="digit" value="{{form.birthWeightKg}}" data-field="birthWeightKg" bindinput="onFieldInput" placeholder="如 3.1" />
+        <text>kg</text>
+      </view>
+      <text class="field-help">用于保留出生记录，当前判断仍以“当前体重”为准。</text>
+    </label>
+
+    <view class="switch-row">
+      <text>是否早产</text>
+      <switch checked="{{form.isPremature}}" data-field="isPremature" bindchange="onSwitchChange" />
+    </view>
+
+    <view class="switch-row">
+      <text>黄疸高风险因素</text>
+      <switch checked="{{form.hasJaundiceRiskFactors}}" data-field="hasJaundiceRiskFactors" bindchange="onSwitchChange" />
+    </view>
+
+    <label class="field">
+      <text class="label">备注</text>
+      <textarea value="{{form.note}}" data-field="note" bindinput="onFieldInput" placeholder="可记录特殊情况" auto-height />
+    </label>
+
+    <text wx:if="{{errorText}}" class="error">{{errorText}}</text>
+    <button class="save" loading="{{isSaving}}" bindtap="onSaveTap">保存档案</button>
+  </view>
+</view>

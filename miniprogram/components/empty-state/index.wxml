@@ -1,0 +1,3 @@
+<view class="empty-state">
+  <text>{{title}}</text>
+</view>

@@ -1,0 +1,268 @@
+.page {
+  min-height: 100vh;
+  padding: 32rpx 32rpx 204rpx;
+  box-sizing: border-box;
+}
+
+.field-row {
+  display: flex;
+  gap: 16rpx;
+}
+
+.avatar-btn {
+  position: relative;
+  flex: 0 0 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 88rpx !important;
+  max-width: 88rpx;
+  height: 88rpx;
+  min-width: 88rpx !important;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+  border: 3rpx solid #20211F;
+  border-radius: 999px;
+  background: #FFFEF9;
+  color: #20211F;
+  line-height: 1;
+}
+
+.avatar-btn::after {
+  border: 0;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.profile-hero {
+  min-height: 300rpx;
+  margin: 16rpx 8rpx 24rpx;
+  padding: 36rpx;
+  box-sizing: border-box;
+  border: 3rpx solid #20211F;
+  border-radius: 22px;
+  display: grid;
+  align-content: space-between;
+  background:
+    linear-gradient(135deg, rgba(220, 238, 229, 0.92), rgba(255, 254, 249, 0.9) 50%, rgba(243, 217, 139, 0.72));
+}
+
+.profile-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 28rpx;
+}
+
+.name-field {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14rpx;
+}
+
+.info-list {
+  display: grid;
+  gap: 18rpx;
+}
+
+.info-item {
+  min-height: 84rpx;
+  border-bottom: 2rpx solid #DEDED5;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24rpx;
+  align-items: center;
+  font-size: 28rpx;
+  font-weight: 800;
+}
+
+.info-item:last-child {
+  border-bottom: 0;
+}
+
+.info-control,
+.inline-control {
+  color: #74766F;
+  font-weight: 500;
+}
+
+.info-control {
+  min-width: 180rpx;
+  text-align: right;
+}
+
+.inline-control {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8rpx;
+  min-width: 148rpx;
+}
+
+.form.panel {
+  padding-bottom: 28rpx;
+}
+
+.status-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 112rpx;
+  height: 72rpx;
+  min-height: 72rpx;
+  padding: 0;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1;
+}
+
+.status-badge-text {
+  display: block;
+  line-height: 1;
+  transform: translateY(1rpx);
+}
+
+.field {
+  display: block;
+  margin-top: 20rpx;
+}
+
+.field.half {
+  flex: 1;
+  min-width: 0;
+}
+
+.compact-field {
+  padding: 20rpx 22rpx;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+}
+
+input,
+textarea,
+.picker {
+  width: 100%;
+  min-height: 84rpx;
+  margin-top: 10rpx;
+  padding: 0 22rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+  color: #20211F;
+  font-size: 30rpx;
+}
+
+.baby-name-input {
+  width: 100%;
+  min-height: 96rpx;
+  margin-top: 12rpx;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 80rpx;
+  line-height: 96rpx;
+  font-weight: 600;
+}
+
+.info-input {
+  width: 104rpx;
+  min-height: 56rpx;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #74766F;
+  font-size: 28rpx;
+  line-height: 56rpx;
+  text-align: right;
+  font-weight: 500;
+}
+
+.compact-input-row {
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  margin-top: 10rpx;
+  color: #74766F;
+  font-size: 30rpx;
+}
+
+.compact-input {
+  flex: 0 0 140rpx;
+  width: 140rpx;
+  min-height: 54rpx;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font-size: 30rpx;
+}
+
+.field-help {
+  display: block;
+  margin-top: 10rpx;
+  color: #74766F;
+  font-size: 22rpx;
+  line-height: 1.45;
+}
+
+textarea {
+  min-height: 132rpx;
+  padding-top: 22rpx;
+}
+
+.picker {
+  line-height: 84rpx;
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 92rpx;
+  margin-top: 20rpx;
+  padding: 0 22rpx;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+  font-size: 30rpx;
+}
+
+.error {
+  display: block;
+  margin-top: 20rpx;
+  color: #C94F45;
+  font-size: 26rpx;
+}
+
+.save {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 88rpx;
+  margin-top: 28rpx;
+  padding: 0;
+  border-radius: 8px;
+  background: #20211F;
+  color: #FFFEF9;
+  font-size: 32rpx;
+  line-height: 1;
+}
+
+.save::after {
+  border: 0;
+}

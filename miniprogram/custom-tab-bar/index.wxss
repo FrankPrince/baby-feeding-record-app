@@ -1,0 +1,170 @@
+.tabbar {
+  position: fixed;
+  left: 24rpx;
+  right: 24rpx;
+  bottom: calc(24rpx + env(safe-area-inset-bottom));
+  z-index: 99;
+  height: 140rpx;
+  padding: 14rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #20211F;
+  border-radius: 22px;
+  background: rgba(255, 254, 249, 0.96);
+  display: flex;
+  align-items: center;
+}
+
+.tab {
+  flex: 1;
+  height: 100%;
+  text-align: center;
+  color: #74766F;
+  font-size: 22rpx;
+  line-height: 1;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-icon {
+  width: 44rpx;
+  height: 44rpx;
+  border: 0;
+  border-radius: 8px;
+  margin: 0 0 8rpx;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tab-mark,
+.tab-mark::before,
+.tab-mark::after {
+  box-sizing: border-box;
+}
+
+.tab-mark {
+  position: relative;
+  width: 34rpx;
+  height: 34rpx;
+}
+
+.tab-mark.today {
+  width: 28rpx;
+  height: 28rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 999px;
+}
+
+.tab-mark.today::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 5rpx;
+  height: 5rpx;
+  border-radius: 999px;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+
+.tab-mark.record {
+  width: 28rpx;
+  height: 28rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 6rpx;
+}
+
+.tab-mark.record::before,
+.tab-mark.record::after {
+  content: "";
+  position: absolute;
+  background: currentColor;
+}
+
+.tab-mark.record::before {
+  left: 6rpx;
+  right: 6rpx;
+  top: 50%;
+  height: 3rpx;
+  transform: translateY(-50%);
+}
+
+.tab-mark.record::after {
+  top: 6rpx;
+  bottom: 6rpx;
+  left: 50%;
+  width: 3rpx;
+  transform: translateX(-50%);
+}
+
+.tab-mark.trends::before,
+.tab-mark.trends::after {
+  content: "";
+  position: absolute;
+  bottom: 4rpx;
+  width: 7rpx;
+  border-radius: 999px 999px 0 0;
+  background: currentColor;
+}
+
+.tab-mark.trends {
+  border-bottom: 3rpx solid currentColor;
+}
+
+.tab-mark.trends::before {
+  left: 6rpx;
+  height: 16rpx;
+}
+
+.tab-mark.trends::after {
+  right: 6rpx;
+  height: 26rpx;
+}
+
+.tab-mark.baby {
+  width: 28rpx;
+  height: 28rpx;
+  border: 3rpx solid currentColor;
+  border-radius: 999px;
+}
+
+.tab-mark.baby::before,
+.tab-mark.baby::after {
+  content: "";
+  position: absolute;
+  top: -6rpx;
+  width: 8rpx;
+  height: 8rpx;
+  border: 3rpx solid currentColor;
+  border-bottom: 0;
+  border-radius: 999px 999px 0 0;
+}
+
+.tab-mark.baby::before {
+  left: 2rpx;
+  transform: rotate(-24deg);
+}
+
+.tab-mark.baby::after {
+  right: 2rpx;
+  transform: rotate(24deg);
+}
+
+.tab-text {
+  display: block;
+  text-align: center;
+  line-height: 28rpx;
+}
+
+.tab.active {
+  color: #20211F;
+  font-weight: 800;
+}
+
+.tab.active .tab-icon {
+  color: #20211F;
+}

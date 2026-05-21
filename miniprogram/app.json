@@ -1,0 +1,41 @@
+{
+  "pages": [
+    "pages/today/index",
+    "pages/record/index",
+    "pages/trends/index",
+    "pages/baby/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "宝宝喂养记录",
+    "navigationBarBackgroundColor": "#FFFEF9",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F7F7F2"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#8B8B82",
+    "selectedColor": "#20211F",
+    "backgroundColor": "#FFFEF9",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/today/index",
+        "text": "今日"
+      },
+      {
+        "pagePath": "pages/record/index",
+        "text": "记录"
+      },
+      {
+        "pagePath": "pages/trends/index",
+        "text": "趋势"
+      },
+      {
+        "pagePath": "pages/baby/index",
+        "text": "宝宝"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

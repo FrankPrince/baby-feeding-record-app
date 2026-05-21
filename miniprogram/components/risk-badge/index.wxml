@@ -1,0 +1,3 @@
+<view class="badge {{level}}">
+  <text>{{label}}</text>
+</view>

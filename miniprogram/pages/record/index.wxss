@@ -1,0 +1,87 @@
+.page {
+  min-height: 100vh;
+  padding: 32rpx 32rpx 204rpx;
+  box-sizing: border-box;
+}
+
+.segmented {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6rpx;
+  padding: 6rpx;
+  border: 2rpx solid #20211F;
+  border-radius: 999px;
+  background: #EEEEE7;
+}
+
+.segmented button {
+  min-height: 64rpx;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: #74766F;
+  font-size: 28rpx;
+  font-weight: 800;
+  line-height: 64rpx;
+}
+
+.segmented button.active {
+  border: 2rpx solid #20211F;
+  background: #FFFEF9;
+  color: #20211F;
+}
+
+.record-row {
+  min-height: 140rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24rpx;
+  align-items: center;
+}
+
+.record-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: 800;
+}
+
+.record-sub {
+  display: block;
+  margin-top: 10rpx;
+  color: #74766F;
+  font-size: 24rpx;
+}
+
+.amount {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 48rpx;
+  font-weight: 600;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20rpx;
+}
+
+.tile {
+  min-height: 144rpx;
+  padding: 24rpx;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8px;
+  background: #FFFEFB;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.tile-value {
+  font-size: 38rpx;
+  font-weight: 800;
+}

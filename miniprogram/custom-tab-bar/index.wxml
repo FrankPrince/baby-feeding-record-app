@@ -1,0 +1,8 @@
+<view class="tabbar">
+  <navigator wx:for="{{items}}" wx:key="pagePath" class="tab {{selected === index ? 'active' : ''}}" url="{{item.pagePath}}" open-type="switchTab">
+    <view class="tab-icon">
+      <view class="tab-mark {{item.iconClass}}"></view>
+    </view>
+    <view class="tab-text">{{item.text}}</view>
+  </navigator>
+</view>
