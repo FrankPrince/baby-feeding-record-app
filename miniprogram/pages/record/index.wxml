@@ -2,9 +2,8 @@
   <view class="appbar">
     <view>
       <text class="app-title">记录</text>
-      <text class="app-subtitle">今天 · 待添加记录</text>
+      <text class="app-subtitle">{{activeTab === 0 ? '喂养记录 · 本地保存' : activeTab === 1 ? '大小便记录 · 颜色提示' : '后续记录模块'}}</text>
     </view>
-    <view class="icon-btn">+</view>
   </view>
 
   <view class="segmented">
@@ -13,31 +12,303 @@
     </block>
   </view>
 
-  <view class="panel">
+  <block wx:if="{{activeTab === 0}}">
+  <view class="panel form-panel">
     <view class="panel-head">
       <view>
-        <text class="panel-title">今日{{tabs[activeTab]}}</text>
-        <text class="label">保存后会按时间倒序显示</text>
+        <text class="panel-title">新增喂养</text>
+        <text class="label">母乳和奶粉都按 ml 记录</text>
       </view>
-      <text class="badge warn">0 条</text>
     </view>
-    <view class="record-row">
-      <view>
-        <text class="record-title">暂无记录</text>
-        <text class="record-sub">后续 Ticket 会补齐完整表单和历史编辑</text>
+
+    <view class="type-row">
+      <block wx:for="{{feedingTypeOptions}}" wx:key="value">
+        <button class="type-btn {{feedingForm.feedingType === item.value ? 'active' : ''}}" hover-class="choice-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onFeedingTypeTap">{{item.label}}</button>
+      </block>
+    </view>
+
+    <view class="quick-row">
+      <block wx:for="{{quickAmounts}}" wx:key="*this">
+        <button class="quick-btn {{feedingForm.amountMl == item ? 'active' : ''}}" hover-class="quick-btn-hover" hover-stay-time="80" data-amount="{{item}}" bindtap="onQuickAmountTap">
+          <text>{{item}}</text>
+          <text class="quick-unit">ml</text>
+        </button>
+      </block>
+    </view>
+
+    <label class="field">
+      <text class="label">奶量 ml</text>
+      <input class="field-input" type="digit" value="{{feedingForm.amountMl}}" bindinput="onFeedingAmountInput" placeholder="手动输入奶量" />
+    </label>
+
+    <view class="time-grid">
+      <view class="field">
+        <text class="label">日期</text>
+        <picker mode="date" value="{{feedingForm.feedingDate}}" bindchange="onFeedingDateChange">
+          <view class="picker-control">{{feedingForm.feedingDate}}</view>
+        </picker>
       </view>
-      <text class="amount">--</text>
+      <view class="field">
+        <text class="label">时间</text>
+        <picker mode="time" value="{{feedingForm.feedingClock}}" bindchange="onFeedingTimeChange">
+          <view class="picker-control">{{feedingForm.feedingClock}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <label class="field">
+      <text class="label">备注</text>
+      <textarea value="{{feedingForm.note}}" bindinput="onFeedingNoteInput" placeholder="可记录估算方式或宝宝反应" auto-height />
+    </label>
+
+    <text wx:if="{{feedingErrorText}}" class="error">{{feedingErrorText}}</text>
+    <view class="action-row">
+      <button class="save" loading="{{isSavingFeeding}}" bindtap="onSaveFeedingTap">保存喂养</button>
     </view>
   </view>
 
   <view class="panel">
     <view class="panel-head">
-      <text class="panel-title">尿便摘要</text>
-      <text class="badge warn">关注颜色 0</text>
+      <view>
+        <text class="panel-title">每日统计</text>
+        <text class="label">按自然日汇总</text>
+      </view>
+      <picker mode="date" value="{{feedingFilterDate}}" bindchange="onFeedingFilterDateChange">
+        <view class="badge warn">{{feedingFilterDate}}</view>
+      </picker>
     </view>
     <view class="grid-2">
-      <view class="tile"><text class="label">尿量</text><text class="tile-value">--</text></view>
-      <view class="tile"><text class="label">颜色</text><text class="tile-value">--</text></view>
+      <view class="tile"><text class="label">总奶量</text><text class="tile-value">{{feedingSummary ? feedingSummary.totalAmountMl : 0}} ml</text></view>
+      <view class="tile"><text class="label">次数</text><text class="tile-value">{{feedingSummary ? feedingSummary.totalCount : 0}}</text></view>
+      <view class="tile"><text class="label">母乳</text><text class="tile-value">{{feedingSummary ? feedingSummary.breastAmountMl : 0}} ml</text></view>
+      <view class="tile"><text class="label">奶粉</text><text class="tile-value">{{feedingSummary ? feedingSummary.formulaAmountMl : 0}} ml</text></view>
+    </view>
+    <view class="notice">
+      {{feedingSummary && feedingSummary.milkStatus ? '奶量状态：' + feedingSummary.milkStatus.status + '，建议 ' + (feedingSummary.milkStatus.lowerLimitMl || '--') + ' - ' + (feedingSummary.milkStatus.upperLimitMl || '--') + ' ml。' : '奶量状态：无法判断。'}}
+      该结果仅作为家庭记录参考，不替代医生建议。
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">当日喂养记录</text>
+        <text class="label">{{feedingFilterDate}} · 按时间倒序，左滑显示操作</text>
+      </view>
+      <text class="badge">{{feedingRecords.length}} 条</text>
+    </view>
+
+    <view wx:if="{{feedingRecords.length === 0}}" class="record-row">
+      <view>
+        <text class="record-title">暂无喂养记录</text>
+        <text class="record-sub">选择奶量并保存后会显示在这里</text>
+      </view>
+      <text class="amount">--</text>
+    </view>
+
+    <block wx:else>
+      <block wx:for="{{feedingRecords}}" wx:key="id">
+        <view class="history-swipe" data-id="{{item.id}}" bindtouchstart="onFeedingRecordTouchStart" bindtouchend="onFeedingRecordTouchEnd">
+          <view class="swipe-actions">
+            <view class="swipe-btn edit" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onEditFeedingTap">
+              <view class="swipe-icon edit-icon">
+                <view class="edit-pencil"></view>
+                <view class="edit-line"></view>
+              </view>
+              <text class="swipe-label">编辑</text>
+            </view>
+            <view class="swipe-btn delete" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onDeleteFeedingTap">
+              <view class="swipe-icon delete-icon">
+                <view class="delete-lid"></view>
+                <view class="delete-bin"></view>
+              </view>
+              <text class="swipe-label">删除</text>
+            </view>
+          </view>
+          <view class="record-row feeding-record swipe-card {{activeSwipeId === item.id ? 'open' : ''}}" data-id="{{item.id}}">
+            <view>
+              <text class="record-title">{{item.feedingType === 'breast' ? '母乳' : '奶粉'}} · {{item.amountMl}} ml</text>
+              <text class="record-sub">{{item.displayClock}}</text>
+              <text wx:if="{{item.note}}" class="record-sub">备注：{{item.note}}</text>
+            </view>
+            <text class="chevron">‹</text>
+          </view>
+        </view>
+      </block>
+    </block>
+  </view>
+  </block>
+
+  <block wx:if="{{activeTab === 1}}">
+  <view class="panel form-panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">{{diaperEditingRecordId ? '编辑大小便' : '新增大小便'}}</text>
+        <text class="label">按本次换尿布情况记录</text>
+      </view>
+      <button wx:if="{{diaperEditingRecordId}}" class="secondary compact" bindtap="onResetDiaperForm">取消编辑</button>
+    </view>
+
+    <view class="type-row diaper-type-row">
+      <block wx:for="{{diaperTypeOptions}}" wx:key="value">
+        <button class="type-btn diaper-type-btn {{diaperForm.recordType === item.value ? 'active' : ''}}" hover-class="choice-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onDiaperTypeTap">{{item.label}}</button>
+      </block>
+    </view>
+
+    <view wx:if="{{diaperForm.recordType === 'pee' || diaperForm.recordType === 'both'}}" class="field">
+      <text class="label">尿量</text>
+      <view class="quick-row diaper-choice-row">
+        <block wx:for="{{diaperAmountOptions}}" wx:key="value">
+          <button class="quick-btn amount-choice {{diaperForm.peeAmount === item.value ? 'active' : ''}}" hover-class="quick-btn-hover" hover-stay-time="80" data-field="peeAmount" data-value="{{item.value}}" bindtap="onDiaperAmountTap">{{item.label}}</button>
+        </block>
+      </view>
+    </view>
+
+    <view wx:if="{{diaperForm.recordType === 'poop' || diaperForm.recordType === 'both'}}" class="field">
+      <text class="label">粪量</text>
+      <view class="quick-row diaper-choice-row">
+        <block wx:for="{{diaperAmountOptions}}" wx:key="value">
+          <button class="quick-btn amount-choice {{diaperForm.poopAmount === item.value ? 'active' : ''}}" hover-class="quick-btn-hover" hover-stay-time="80" data-field="poopAmount" data-value="{{item.value}}" bindtap="onDiaperAmountTap">{{item.label}}</button>
+        </block>
+      </view>
+    </view>
+
+    <view class="field">
+      <text class="label">颜色</text>
+      <view class="color-grid">
+        <block wx:for="{{diaperColorOptions}}" wx:key="value">
+          <button class="color-btn color-{{item.value}} {{diaperForm.color === item.value ? 'active' : ''}}" hover-class="choice-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onDiaperColorTap">{{item.label}}</button>
+        </block>
+      </view>
+    </view>
+
+    <view class="time-grid">
+      <view class="field">
+        <text class="label">日期</text>
+        <picker mode="date" value="{{diaperForm.diaperDate}}" bindchange="onDiaperDateChange">
+          <view class="picker-control">{{diaperForm.diaperDate}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="label">时间</text>
+        <picker mode="time" value="{{diaperForm.diaperClock}}" bindchange="onDiaperTimeChange">
+          <view class="picker-control">{{diaperForm.diaperClock}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <label class="field">
+      <text class="label">备注</text>
+      <textarea value="{{diaperForm.note}}" bindinput="onDiaperNoteInput" placeholder="可记录宝宝状态或换尿布情况" auto-height />
+    </label>
+
+    <text wx:if="{{diaperErrorText}}" class="error">{{diaperErrorText}}</text>
+    <view class="action-row diaper-action-row">
+      <button class="secondary" bindtap="onResetDiaperForm">重置</button>
+      <button class="save" loading="{{isSavingDiaper}}" bindtap="onSaveDiaperTap">{{diaperEditingRecordId ? '保存修改' : '保存大小便'}}</button>
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">每日统计</text>
+        <text class="label">尿便次数和需关注颜色</text>
+      </view>
+      <picker mode="date" value="{{diaperFilterDate}}" bindchange="onDiaperFilterDateChange">
+        <view class="badge warn">{{diaperFilterDate}}</view>
+      </picker>
+    </view>
+    <view class="grid-2">
+      <view class="tile"><text class="label">尿尿</text><text class="tile-value">{{diaperSummary ? diaperSummary.peeCount : 0}} 次</text></view>
+      <view class="tile"><text class="label">便便</text><text class="tile-value">{{diaperSummary ? diaperSummary.poopCount : 0}} 次</text></view>
+      <view class="tile"><text class="label">尿量分布</text><text class="tile-value">小{{diaperSummary ? diaperSummary.peeAmountDistribution.small : 0}} / 中{{diaperSummary ? diaperSummary.peeAmountDistribution.medium : 0}} / 大{{diaperSummary ? diaperSummary.peeAmountDistribution.large : 0}}</text></view>
+      <view class="tile"><text class="label">粪量分布</text><text class="tile-value">小{{diaperSummary ? diaperSummary.poopAmountDistribution.small : 0}} / 中{{diaperSummary ? diaperSummary.poopAmountDistribution.medium : 0}} / 大{{diaperSummary ? diaperSummary.poopAmountDistribution.large : 0}}</text></view>
+    </view>
+    <view class="notice">
+      需关注颜色 {{diaperSummary ? diaperSummary.attentionColorCount : 0}} 次。出现需关注颜色时，请结合宝宝状态观察，必要时咨询医生。
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">当日大小便记录</text>
+        <text class="label">{{diaperFilterDate}} · 按时间倒序，左滑显示操作</text>
+      </view>
+      <text class="badge">{{diaperRecords.length}} 条</text>
+    </view>
+
+    <view wx:if="{{diaperRecords.length === 0}}" class="record-row">
+      <view>
+        <text class="record-title">暂无大小便记录</text>
+        <text class="record-sub">选择类型、量和颜色后会显示在这里</text>
+      </view>
+      <text class="amount">--</text>
+    </view>
+
+    <block wx:else>
+      <block wx:for="{{diaperRecords}}" wx:key="id">
+        <view class="history-swipe" data-id="{{item.id}}" bindtouchstart="onDiaperRecordTouchStart" bindtouchend="onDiaperRecordTouchEnd">
+          <view class="swipe-actions">
+            <view class="swipe-btn edit" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onEditDiaperTap">
+              <view class="swipe-icon edit-icon">
+                <view class="edit-pencil"></view>
+                <view class="edit-line"></view>
+              </view>
+              <text class="swipe-label">编辑</text>
+            </view>
+            <view class="swipe-btn delete" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onDeleteDiaperTap">
+              <view class="swipe-icon delete-icon">
+                <view class="delete-lid"></view>
+                <view class="delete-bin"></view>
+              </view>
+              <text class="swipe-label">删除</text>
+            </view>
+          </view>
+          <view class="record-row feeding-record swipe-card {{activeSwipeId === item.id ? 'open' : ''}}" data-id="{{item.id}}">
+            <view>
+              <text class="record-title">{{item.recordTypeText}} · {{item.colorText}}</text>
+              <text class="record-sub">{{item.displayClock}} · {{item.amountText}}</text>
+              <text wx:if="{{item.note}}" class="record-sub">备注：{{item.note}}</text>
+              <text wx:if="{{item.attentionRequired}}" class="record-sub attention-copy">需关注颜色，请结合宝宝状态观察，必要时咨询医生。</text>
+            </view>
+            <text class="badge {{item.attentionRequired ? 'danger' : ''}}">{{item.attentionRequired ? item.attentionText : '普通'}}</text>
+          </view>
+        </view>
+      </block>
+    </block>
+  </view>
+  </block>
+
+  <view wx:if="{{amountEditVisible}}" class="modal-mask" catchtouchmove="noop">
+    <view class="amount-dialog">
+      <view class="dialog-head">
+        <text class="panel-title">修改奶量</text>
+      </view>
+      <label class="field">
+        <text class="label">奶量 ml</text>
+        <input class="field-input" type="digit" value="{{amountEditValue}}" focus bindinput="onAmountEditInput" placeholder="输入奶量" />
+      </label>
+      <text wx:if="{{amountEditErrorText}}" class="error">{{amountEditErrorText}}</text>
+      <view class="dialog-actions">
+        <button class="secondary dialog-button" bindtap="onCancelAmountEdit">取消</button>
+        <button class="save dialog-button" loading="{{isSavingAmountEdit}}" bindtap="onSaveAmountEditTap">保存</button>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{activeTab === 2}}" class="panel">
+    <view class="panel-head">
+      <text class="panel-title">{{tabs[activeTab]}}</text>
+      <text class="badge warn">待开发</text>
+    </view>
+    <view class="record-row">
+      <view>
+        <text class="record-title">后续 Ticket 补齐</text>
+        <text class="record-sub">当前子任务只实现大小便记录和规则</text>
+      </view>
+      <text class="amount">--</text>
     </view>
   </view>
 </view>

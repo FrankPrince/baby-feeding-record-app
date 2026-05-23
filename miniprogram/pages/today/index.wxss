@@ -1,14 +1,19 @@
 .page {
   min-height: 100vh;
-  padding: 32rpx 32rpx 204rpx;
+  width: 100%;
+  max-width: 760rpx;
+  margin: 0 auto;
+  padding: 32rpx 32rpx 248rpx;
   box-sizing: border-box;
 }
 
 .hero-metric {
-  margin: 16rpx 8rpx 28rpx;
-  padding: 44rpx 0 40rpx;
-  border-top: 3rpx solid #20211F;
-  border-bottom: 3rpx solid #20211F;
+  margin: 12rpx 0 28rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8rpx;
+  background: #FFFEF9;
   display: grid;
   grid-template-columns: 1fr auto;
   gap: 24rpx;
@@ -17,38 +22,38 @@
 
 .metric-value {
   display: block;
-  font-family: Georgia, "Songti SC", serif;
-  font-size: 120rpx;
+  font-family: "Avenir Next", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 80rpx;
   line-height: 0.95;
   font-weight: 600;
   color: #20211F;
 }
 
 .metric-value text {
-  font-size: 40rpx;
+  font-size: 28rpx;
 }
 
 .grid-2 {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20rpx;
+  gap: 24rpx;
 }
 
 .tile {
-  min-height: 172rpx;
-  padding: 26rpx;
+  min-height: 144rpx;
+  padding: 24rpx;
   box-sizing: border-box;
   border: 2rpx solid #DEDED5;
-  border-radius: 8px;
-  background: #FFFEFB;
+  border-radius: 8rpx;
+  background: #FFFEF9;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
 .tile-value {
-  font-size: 48rpx;
-  font-weight: 700;
+  font-size: 30rpx;
+  font-weight: 600;
   line-height: 1;
 }
 
@@ -58,7 +63,7 @@
   gap: 20rpx;
   align-items: center;
   color: #74766F;
-  font-size: 26rpx;
+  font-size: 28rpx;
 }
 
 .dot {
@@ -71,33 +76,33 @@
 
 .risk-value {
   color: #20211F;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .quick-actions {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 18rpx;
+  gap: 20rpx;
 }
 
 .quick {
-  min-height: 140rpx;
-  border: 2rpx solid #20211F;
-  border-radius: 8px;
+  min-height: 128rpx;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8rpx;
   background: #FFFEF9;
   display: grid;
   place-items: center;
   align-content: center;
   gap: 10rpx;
-  font-size: 26rpx;
-  font-weight: 800;
+  font-size: 28rpx;
+  font-weight: 600;
 }
 
 .quick text:first-child {
   width: 48rpx;
   height: 48rpx;
-  border: 2rpx solid #20211F;
-  border-radius: 999px;
+  border: 0;
+  border-radius: 8rpx;
   background: #DCEEE5;
   text-align: center;
   line-height: 44rpx;

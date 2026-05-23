@@ -1,15 +1,18 @@
 .tabbar {
   position: fixed;
-  left: 24rpx;
-  right: 24rpx;
+  left: 32rpx;
+  right: 32rpx;
   bottom: calc(24rpx + env(safe-area-inset-bottom));
   z-index: 99;
+  width: auto;
+  max-width: calc(750rpx - 64rpx);
   height: 140rpx;
+  margin: 0 auto;
   padding: 14rpx;
   box-sizing: border-box;
-  border: 2rpx solid #20211F;
-  border-radius: 22px;
-  background: rgba(255, 254, 249, 0.96);
+  border: 2rpx solid #DEDED5;
+  border-radius: 8rpx;
+  background: #FFFEF9;
   display: flex;
   align-items: center;
 }
@@ -19,7 +22,7 @@
   height: 100%;
   text-align: center;
   color: #74766F;
-  font-size: 22rpx;
+  font-size: 24rpx;
   line-height: 1;
   text-decoration: none;
   display: flex;
@@ -32,7 +35,7 @@
   width: 44rpx;
   height: 44rpx;
   border: 0;
-  border-radius: 8px;
+  border-radius: 8rpx;
   margin: 0 0 8rpx;
   position: relative;
   display: flex;
@@ -162,7 +165,7 @@
 
 .tab.active {
   color: #20211F;
-  font-weight: 800;
+  font-weight: 600;
 }
 
 .tab.active .tab-icon {

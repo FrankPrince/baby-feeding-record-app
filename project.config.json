@@ -11,7 +11,8 @@
       "outputPath": ""
     },
     "condition": false,
-    "ignoreUploadUnusedFiles": false
+    "ignoreUploadUnusedFiles": false,
+    "minifyWXML": true
   },
   "projectname": "baby-feeding-record",
   "libVersion": "3.16.0",

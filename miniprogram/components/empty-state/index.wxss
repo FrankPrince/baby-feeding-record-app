@@ -1,6 +1,7 @@
 .empty-state {
-  padding: 48rpx 0;
-  color: #77786F;
+  padding: 56rpx 24rpx;
+  color: #74766F;
   font-size: 28rpx;
   text-align: center;
+  line-height: 1.5;
 }

@@ -1,16 +1,39 @@
 page {
   min-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: hidden;
   background-color: #F7F7F2;
   background-image:
     linear-gradient(90deg, rgba(32, 33, 31, 0.035) 1px, transparent 1px),
     linear-gradient(0deg, rgba(32, 33, 31, 0.03) 1px, transparent 1px);
   background-size: 72rpx 72rpx;
   color: #20211F;
-  font-family: "Avenir Next", "Gill Sans", "PingFang SC", sans-serif;
+  font-family: "Avenir Next", "PingFang SC", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 button {
-  border-radius: 8px;
+  box-sizing: border-box;
+  height: 80rpx;
+  min-height: 80rpx;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 8rpx;
+  font-family: inherit;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 80rpx;
+  text-align: center;
+}
+
+button::after {
+  border: 0;
+}
+
+.button-hover {
+  opacity: 0.86;
 }
 
 .appbar {
@@ -18,40 +41,44 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 24rpx;
-  padding: 10rpx 8rpx 18rpx;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8rpx 4rpx 24rpx;
 }
 
 .app-title {
   display: block;
-  font-family: Georgia, "Songti SC", serif;
-  font-size: 54rpx;
-  line-height: 1;
+  font-size: 40rpx;
+  line-height: 1.2;
   font-weight: 600;
+  letter-spacing: 0;
 }
 
 .app-subtitle {
   display: block;
-  margin-top: 14rpx;
+  margin-top: 8rpx;
   color: #74766F;
   font-size: 24rpx;
+  line-height: 1.4;
 }
 
 .icon-btn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 72rpx;
-  height: 72rpx;
+  width: 80rpx;
+  height: 80rpx;
+  min-height: 80rpx;
   min-width: 0;
   margin: 0;
   padding: 0;
-  border: 2rpx solid #20211F;
-  border-radius: 999px;
+  border: 0;
+  border-radius: 8rpx;
   background: #FFFEF9;
   color: #20211F;
-  font-size: 34rpx;
-  font-weight: 700;
-  line-height: 1;
+  font-size: 28rpx;
+  font-weight: 600;
+  line-height: 80rpx;
 }
 
 .icon-btn::after {
@@ -59,11 +86,14 @@ button {
 }
 
 .panel {
+  width: 100%;
+  max-width: 100%;
   margin-top: 24rpx;
-  padding: 28rpx;
+  padding: 24rpx;
+  box-sizing: border-box;
   border: 2rpx solid #DEDED5;
-  border-radius: 8px;
-  background: #FFFEFB;
+  border-radius: 8rpx;
+  background: #FFFEF9;
 }
 
 .panel-head {
@@ -76,8 +106,9 @@ button {
 
 .panel-title {
   display: block;
-  font-size: 28rpx;
-  font-weight: 800;
+  font-size: 30rpx;
+  font-weight: 600;
+  line-height: 1.25;
 }
 
 .label {
@@ -92,12 +123,12 @@ button {
   align-items: center;
   min-height: 52rpx;
   padding: 0 18rpx;
-  border: 2rpx solid #20211F;
-  border-radius: 999px;
+  border: 2rpx solid #DEDED5;
+  border-radius: 8rpx;
   background: #DCEEE5;
   color: #1E6B4F;
   font-size: 24rpx;
-  font-weight: 800;
+  font-weight: 600;
   white-space: nowrap;
 }
 
@@ -114,7 +145,8 @@ button {
 .notice {
   margin-top: 20rpx;
   padding: 20rpx 24rpx;
-  border-left: 6rpx solid #20211F;
+  border-left: 6rpx solid #1D1D1F;
+  border-radius: 0 8rpx 8rpx 0;
   background: #EEEEE7;
   color: #74766F;
   font-size: 24rpx;
