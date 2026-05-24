@@ -9,6 +9,11 @@ function createJaundiceRecord(input, options) {
     averageMgDl: toNullableNumber(input.averageMgDl),
     measurementMethod: input.measurementMethod || 'unknown',
     riskLevel: input.riskLevel || 'unknown',
+    riskLabel: input.riskLabel || '无法判断',
+    riskColor: input.riskColor || 'gray',
+    riskMessage: input.riskMessage || '',
+    referenceNote: input.referenceNote || '',
+    thresholdMgDl: toNullableNumber(input.thresholdMgDl),
     recordTime: input.recordTime || (options && options.now) || new Date().toISOString(),
     note: input.note || ''
   }), options);

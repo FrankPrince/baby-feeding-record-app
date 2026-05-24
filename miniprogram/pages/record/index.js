@@ -1,6 +1,7 @@
 const babyService = require('../../services/babyService');
 const feedingService = require('../../services/feedingService');
 const diaperService = require('../../services/diaperService');
+const jaundiceService = require('../../services/jaundiceService');
 const { formatDate, formatTime } = require('../../utils/date');
 
 const AMOUNT_LABELS = {
@@ -25,6 +26,24 @@ const DIAPER_COLOR_LABELS = {
   gray_white: '灰白色',
   other: '其他'
 };
+
+const JAUNDICE_METHOD_LABELS = {
+  transcutaneous: '经皮',
+  serum: '血清',
+  unknown: '未知'
+};
+
+const RECORD_TAB_BY_TYPE = {
+  feeding: 0,
+  diaper: 1,
+  jaundice: 2
+};
+
+function getRecordTabFromType(type) {
+  return Object.prototype.hasOwnProperty.call(RECORD_TAB_BY_TYPE, type)
+    ? RECORD_TAB_BY_TYPE[type]
+    : null;
+}
 
 function getNowParts() {
   const now = new Date();
@@ -58,6 +77,19 @@ function createDefaultDiaperForm() {
   };
 }
 
+function createDefaultJaundiceForm() {
+  const now = getNowParts();
+  return {
+    value1MgDl: '',
+    value2MgDl: '',
+    value3MgDl: '',
+    measurementMethod: 'transcutaneous',
+    jaundiceDate: now.date,
+    jaundiceClock: now.time,
+    note: ''
+  };
+}
+
 function createFeedingPayload(form) {
   return {
     feedingType: form.feedingType,
@@ -74,6 +106,17 @@ function createDiaperPayload(form) {
     poopAmount: form.poopAmount,
     color: form.color,
     recordTime: `${form.diaperDate}T${form.diaperClock}:00`,
+    note: form.note
+  };
+}
+
+function createJaundicePayload(form) {
+  return {
+    value1MgDl: form.value1MgDl,
+    value2MgDl: form.value2MgDl,
+    value3MgDl: form.value3MgDl,
+    measurementMethod: form.measurementMethod,
+    recordTime: `${form.jaundiceDate}T${form.jaundiceClock}:00`,
     note: form.note
   };
 }
@@ -116,6 +159,16 @@ function toDiaperRecordView(record) {
   });
 }
 
+function toJaundiceRecordView(record) {
+  return Object.assign({}, record, {
+    displayDate: formatDate(record.recordTime),
+    displayClock: formatTime(record.recordTime),
+    measurementMethodText: JAUNDICE_METHOD_LABELS[record.measurementMethod] || '未知',
+    riskText: record.riskLabel || '无法判断',
+    valuesText: `${record.value1MgDl} / ${record.value2MgDl} / ${record.value3MgDl} mg/dL`
+  });
+}
+
 Page({
   data: {
     tabs: ['喂养', '大小便', '黄疸'],
@@ -144,18 +197,28 @@ Page({
       { value: 'white', label: '白色' },
       { value: 'other', label: '其他' }
     ],
+    jaundiceMethodOptions: [
+      { value: 'transcutaneous', label: '经皮' },
+      { value: 'serum', label: '血清' },
+      { value: 'unknown', label: '未知' }
+    ],
     quickAmounts: [30, 60, 90, 120],
     feedingForm: createDefaultFeedingForm(),
     diaperForm: createDefaultDiaperForm(),
+    jaundiceForm: createDefaultJaundiceForm(),
     feedingFilterDate: getNowParts().date,
     diaperFilterDate: getNowParts().date,
+    jaundiceFilterDate: getNowParts().date,
     feedingRecords: [],
     diaperRecords: [],
+    jaundiceRecords: [],
     feedingSummary: null,
     diaperSummary: null,
     feedingErrorText: '',
     diaperErrorText: '',
+    jaundiceErrorText: '',
     diaperEditingRecordId: '',
+    jaundiceEditingRecordId: '',
     activeSwipeId: '',
     swipeStartX: 0,
     amountEditVisible: false,
@@ -164,20 +227,48 @@ Page({
     amountEditErrorText: '',
     isSavingAmountEdit: false,
     isSavingFeeding: false,
-    isSavingDiaper: false
+    isSavingDiaper: false,
+    isSavingJaundice: false
   },
 
-  onLoad() {
+  onLoad(options) {
+    const tab = getRecordTabFromType(options && options.type);
+
+    if (tab !== null) {
+      this.setData({ activeTab: tab });
+    }
+
     this.loadFeedingData();
     this.loadDiaperData();
+    this.loadJaundiceData();
   },
 
   onShow() {
     if (typeof this.getTabBar === 'function' && this.getTabBar()) {
       this.getTabBar().setData({ selected: 1 });
     }
+    this.applyPendingRecordTab();
     this.loadFeedingData();
     this.loadDiaperData();
+    this.loadJaundiceData();
+  },
+
+  applyPendingRecordTab() {
+    if (typeof getApp !== 'function') {
+      return;
+    }
+
+    const app = getApp();
+    const pendingRecordTab = app && app.globalData ? app.globalData.pendingRecordTab : null;
+
+    if (pendingRecordTab === null || pendingRecordTab === undefined) {
+      return;
+    }
+
+    app.globalData.pendingRecordTab = null;
+    this.setData({
+      activeTab: Number(pendingRecordTab)
+    });
   },
 
   onTabTap(event) {
@@ -201,6 +292,16 @@ Page({
   },
 
   noop() {},
+
+  async loadJaundiceData() {
+    const listResult = await jaundiceService.listJaundiceRecords({
+      date: this.data.jaundiceFilterDate
+    });
+
+    this.setData({
+      jaundiceRecords: listResult.records.map(toJaundiceRecordView)
+    });
+  },
 
   async loadFeedingData() {
     const profileResult = await babyService.getBabyProfile();
@@ -322,6 +423,50 @@ Page({
     });
   },
 
+  onJaundiceValueInput(event) {
+    const field = `jaundiceForm.${event.currentTarget.dataset.field}`;
+    this.setData({
+      [field]: event.detail.value,
+      jaundiceErrorText: ''
+    });
+  },
+
+  onJaundiceMethodTap(event) {
+    this.setData({
+      'jaundiceForm.measurementMethod': event.currentTarget.dataset.value,
+      jaundiceErrorText: ''
+    });
+  },
+
+  onJaundiceDateChange(event) {
+    this.setData({
+      'jaundiceForm.jaundiceDate': event.detail.value,
+      jaundiceErrorText: ''
+    });
+  },
+
+  onJaundiceTimeChange(event) {
+    this.setData({
+      'jaundiceForm.jaundiceClock': event.detail.value,
+      jaundiceErrorText: ''
+    });
+  },
+
+  onJaundiceNoteInput(event) {
+    this.setData({
+      'jaundiceForm.note': event.detail.value,
+      jaundiceErrorText: ''
+    });
+  },
+
+  onJaundiceFilterDateChange(event) {
+    this.setData({
+      jaundiceFilterDate: event.detail.value
+    }, () => {
+      this.loadJaundiceData();
+    });
+  },
+
   onDiaperFilterDateChange(event) {
     this.setData({
       diaperFilterDate: event.detail.value
@@ -344,6 +489,15 @@ Page({
       diaperEditingRecordId: '',
       activeSwipeId: '',
       diaperErrorText: ''
+    });
+  },
+
+  onResetJaundiceForm() {
+    this.setData({
+      jaundiceForm: createDefaultJaundiceForm(),
+      jaundiceEditingRecordId: '',
+      activeSwipeId: '',
+      jaundiceErrorText: ''
     });
   },
 
@@ -401,6 +555,36 @@ Page({
     }
   },
 
+  async onSaveJaundiceTap() {
+    this.setData({ isSavingJaundice: true, jaundiceErrorText: '' });
+
+    try {
+      const payload = createJaundicePayload(this.data.jaundiceForm);
+      const wasEditing = Boolean(this.data.jaundiceEditingRecordId);
+
+      if (wasEditing) {
+        await jaundiceService.updateJaundiceRecord(this.data.jaundiceEditingRecordId, payload);
+      } else {
+        await jaundiceService.createJaundiceRecord(payload);
+      }
+
+      this.setData({
+        jaundiceForm: createDefaultJaundiceForm(),
+        jaundiceEditingRecordId: '',
+        activeSwipeId: '',
+        isSavingJaundice: false
+      });
+      await this.loadJaundiceData();
+      wx.showToast({ title: wasEditing ? '已修改' : '已保存', icon: 'success' });
+    } catch (error) {
+      const jaundiceErrorText = error.code === 'JAUNDICE_RECORD_VALIDATION_FAILED'
+        ? '请输入 3 个大于 0 的黄疸值'
+        : '保存失败';
+      this.setData({ jaundiceErrorText, isSavingJaundice: false });
+      wx.showToast({ title: jaundiceErrorText, icon: 'none' });
+    }
+  },
+
   onEditFeedingTap(event) {
     const recordId = event.currentTarget.dataset.id;
     const record = this.data.feedingRecords.find((item) => item.id === recordId);
@@ -441,6 +625,31 @@ Page({
       activeSwipeId: '',
       diaperErrorText: '',
       activeTab: 1
+    });
+  },
+
+  onEditJaundiceTap(event) {
+    const recordId = event.currentTarget.dataset.id;
+    const record = this.data.jaundiceRecords.find((item) => item.id === recordId);
+
+    if (!record) {
+      return;
+    }
+
+    this.setData({
+      jaundiceEditingRecordId: record.id,
+      jaundiceForm: {
+        value1MgDl: String(record.value1MgDl),
+        value2MgDl: String(record.value2MgDl),
+        value3MgDl: String(record.value3MgDl),
+        measurementMethod: record.measurementMethod,
+        jaundiceDate: formatDate(record.recordTime),
+        jaundiceClock: formatTime(record.recordTime),
+        note: record.note || ''
+      },
+      activeSwipeId: '',
+      jaundiceErrorText: '',
+      activeTab: 2
     });
   },
 
@@ -533,6 +742,27 @@ Page({
     }
   },
 
+  onJaundiceRecordTouchStart(event) {
+    this.setData({
+      swipeStartX: event.touches && event.touches[0] ? event.touches[0].clientX : 0
+    });
+  },
+
+  onJaundiceRecordTouchEnd(event) {
+    const recordId = event.currentTarget.dataset.id;
+    const endX = event.changedTouches && event.changedTouches[0] ? event.changedTouches[0].clientX : this.data.swipeStartX;
+    const deltaX = endX - this.data.swipeStartX;
+
+    if (deltaX < -32) {
+      this.setData({ activeSwipeId: recordId });
+      return;
+    }
+
+    if (deltaX > 24) {
+      this.setData({ activeSwipeId: '' });
+    }
+  },
+
   async onDeleteFeedingTap(event) {
     const recordId = event.currentTarget.dataset.id;
     await feedingService.deleteFeedingRecord(recordId);
@@ -546,6 +776,14 @@ Page({
     await diaperService.deleteDiaperRecord(recordId);
     this.setData({ activeSwipeId: '' });
     await this.loadDiaperData();
+    wx.showToast({ title: '已删除', icon: 'success' });
+  },
+
+  async onDeleteJaundiceTap(event) {
+    const recordId = event.currentTarget.dataset.id;
+    await jaundiceService.deleteJaundiceRecord(recordId);
+    this.setData({ activeSwipeId: '' });
+    await this.loadJaundiceData();
     wx.showToast({ title: '已删除', icon: 'success' });
   }
 });

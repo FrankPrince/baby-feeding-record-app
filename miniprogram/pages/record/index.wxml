@@ -177,7 +177,9 @@
       <text class="label">颜色</text>
       <view class="color-grid">
         <block wx:for="{{diaperColorOptions}}" wx:key="value">
-          <button class="color-btn color-{{item.value}} {{diaperForm.color === item.value ? 'active' : ''}}" hover-class="choice-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onDiaperColorTap">{{item.label}}</button>
+          <button class="color-btn {{diaperForm.color === item.value ? 'active' : ''}}" hover-class="choice-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onDiaperColorTap">
+            <view class="color-dot color-{{item.value}}"></view>
+          </button>
         </block>
       </view>
     </view>
@@ -298,17 +300,118 @@
     </view>
   </view>
 
-  <view wx:if="{{activeTab === 2}}" class="panel">
+  <block wx:if="{{activeTab === 2}}">
+  <view class="panel form-panel">
     <view class="panel-head">
-      <text class="panel-title">{{tabs[activeTab]}}</text>
-      <text class="badge warn">待开发</text>
-    </view>
-    <view class="record-row">
       <view>
-        <text class="record-title">后续 Ticket 补齐</text>
-        <text class="record-sub">当前子任务只实现大小便记录和规则</text>
+        <text class="panel-title">{{jaundiceEditingRecordId ? '编辑黄疸' : '新增黄疸'}}</text>
+        <text class="label">3 个值均使用 mg/dL</text>
+      </view>
+      <button wx:if="{{jaundiceEditingRecordId}}" class="secondary compact" bindtap="onResetJaundiceForm">取消编辑</button>
+    </view>
+
+    <view class="jaundice-value-grid">
+      <label class="field">
+        <text class="label">黄疸值 1</text>
+        <input class="field-input" type="digit" value="{{jaundiceForm.value1MgDl}}" data-field="value1MgDl" bindinput="onJaundiceValueInput" placeholder="mg/dL" />
+      </label>
+      <label class="field">
+        <text class="label">黄疸值 2</text>
+        <input class="field-input" type="digit" value="{{jaundiceForm.value2MgDl}}" data-field="value2MgDl" bindinput="onJaundiceValueInput" placeholder="mg/dL" />
+      </label>
+      <label class="field">
+        <text class="label">黄疸值 3</text>
+        <input class="field-input" type="digit" value="{{jaundiceForm.value3MgDl}}" data-field="value3MgDl" bindinput="onJaundiceValueInput" placeholder="mg/dL" />
+      </label>
+    </view>
+
+    <view class="field">
+      <text class="label">测量方式</text>
+      <view class="quick-row diaper-choice-row">
+        <block wx:for="{{jaundiceMethodOptions}}" wx:key="value">
+          <button class="quick-btn amount-choice {{jaundiceForm.measurementMethod === item.value ? 'active' : ''}}" hover-class="quick-btn-hover" hover-stay-time="80" data-value="{{item.value}}" bindtap="onJaundiceMethodTap">{{item.label}}</button>
+        </block>
+      </view>
+    </view>
+
+    <view class="time-grid">
+      <view class="field">
+        <text class="label">日期</text>
+        <picker mode="date" value="{{jaundiceForm.jaundiceDate}}" bindchange="onJaundiceDateChange">
+          <view class="picker-control">{{jaundiceForm.jaundiceDate}}</view>
+        </picker>
+      </view>
+      <view class="field">
+        <text class="label">时间</text>
+        <picker mode="time" value="{{jaundiceForm.jaundiceClock}}" bindchange="onJaundiceTimeChange">
+          <view class="picker-control">{{jaundiceForm.jaundiceClock}}</view>
+        </picker>
+      </view>
+    </view>
+
+    <label class="field">
+      <text class="label">备注</text>
+      <textarea value="{{jaundiceForm.note}}" bindinput="onJaundiceNoteInput" placeholder="可记录测量位置或宝宝状态" auto-height />
+    </label>
+
+    <text wx:if="{{jaundiceErrorText}}" class="error">{{jaundiceErrorText}}</text>
+    <view class="action-row diaper-action-row">
+      <button class="secondary" bindtap="onResetJaundiceForm">重置</button>
+      <button class="save" loading="{{isSavingJaundice}}" bindtap="onSaveJaundiceTap">{{jaundiceEditingRecordId ? '保存修改' : '保存黄疸'}}</button>
+    </view>
+  </view>
+
+  <view class="panel">
+    <view class="panel-head">
+      <view>
+        <text class="panel-title">当日黄疸记录</text>
+        <text class="label">{{jaundiceFilterDate}} · 按时间倒序，左滑显示操作</text>
+      </view>
+      <picker mode="date" value="{{jaundiceFilterDate}}" bindchange="onJaundiceFilterDateChange">
+        <view class="badge warn">{{jaundiceFilterDate}}</view>
+      </picker>
+    </view>
+
+    <view wx:if="{{jaundiceRecords.length === 0}}" class="record-row">
+      <view>
+        <text class="record-title">暂无黄疸记录</text>
+        <text class="record-sub">输入 3 个 mg/dL 数值后会显示平均值和风险标志</text>
       </view>
       <text class="amount">--</text>
     </view>
+
+    <block wx:else>
+      <block wx:for="{{jaundiceRecords}}" wx:key="id">
+        <view class="history-swipe" data-id="{{item.id}}" bindtouchstart="onJaundiceRecordTouchStart" bindtouchend="onJaundiceRecordTouchEnd">
+          <view class="swipe-actions">
+            <view class="swipe-btn edit" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onEditJaundiceTap">
+              <view class="swipe-icon edit-icon">
+                <view class="edit-pencil"></view>
+                <view class="edit-line"></view>
+              </view>
+              <text class="swipe-label">编辑</text>
+            </view>
+            <view class="swipe-btn delete" hover-class="swipe-btn-hover" data-id="{{item.id}}" catchtap="onDeleteJaundiceTap">
+              <view class="swipe-icon delete-icon">
+                <view class="delete-lid"></view>
+                <view class="delete-bin"></view>
+              </view>
+              <text class="swipe-label">删除</text>
+            </view>
+          </view>
+          <view class="record-row feeding-record swipe-card {{activeSwipeId === item.id ? 'open' : ''}}" data-id="{{item.id}}">
+            <view>
+              <text class="record-title">平均 {{item.averageMgDl}} mg/dL · {{item.riskText}}</text>
+              <text class="record-sub">{{item.displayClock}} · {{item.measurementMethodText}}</text>
+              <text class="record-sub">原始值：{{item.valuesText}}</text>
+              <text wx:if="{{item.note}}" class="record-sub">备注：{{item.note}}</text>
+              <text class="record-sub {{item.riskLevel === 'high' ? 'attention-copy' : ''}}">{{item.riskMessage || item.referenceNote}}</text>
+            </view>
+            <text class="badge {{item.riskLevel === 'high' ? 'danger' : item.riskLevel === 'medium' ? 'warn' : ''}}">{{item.riskText}}</text>
+          </view>
+        </view>
+      </block>
+    </block>
   </view>
+  </block>
 </view>

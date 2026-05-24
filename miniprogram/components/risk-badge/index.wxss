@@ -23,3 +23,9 @@
 .high {
   background: #F4C8C2;
 }
+
+.unknown,
+.not_applicable {
+  background: #EEEEE7;
+  color: #74766F;
+}

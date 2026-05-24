@@ -2,53 +2,88 @@
   <view class="appbar">
     <view>
       <text class="app-title">趋势</text>
-      <text class="app-subtitle">近 {{ranges[activeRange]}}</text>
+      <text class="app-subtitle">{{viewModel.subtitle}}</text>
     </view>
-    <view class="icon-btn">⌄</view>
   </view>
 
   <view class="segmented">
-    <block wx:for="{{ranges}}" wx:key="*this">
-      <button class="{{activeRange === index ? 'active' : ''}}" data-index="{{index}}" bindtap="onRangeTap">{{item}}</button>
+    <block wx:for="{{typeOptions}}" wx:key="value">
+      <button class="{{activeType === item.value ? 'active' : ''}}" data-type="{{item.value}}" bindtap="onTypeTap">{{item.label}}</button>
+    </block>
+  </view>
+
+  <view class="segmented range-tabs">
+    <block wx:for="{{rangeOptions}}" wx:key="value">
+      <button class="{{activeRangeValue == item.value ? 'active' : ''}}" data-value="{{item.value}}" bindtap="onRangeTap">{{item.label}}</button>
     </block>
   </view>
 
   <view class="panel">
     <view class="panel-head">
       <view>
-        <text class="panel-title">奶量趋势</text>
-        <text class="label">含建议区间参考线</text>
+        <text class="panel-title">{{viewModel.title}}</text>
+        <text class="label">{{viewModel.subtitle}}</text>
       </view>
-      <text class="badge warn">暂无</text>
+      <text class="badge {{viewModel.badgeStatusClass === 'alert' ? 'danger' : viewModel.badgeStatusClass === 'ok' ? '' : 'warn'}}">{{viewModel.badge}}</text>
     </view>
-    <view class="chart milk">
-      <view class="band"></view>
-      <view class="line line-a"></view>
-      <view class="line line-b"></view>
-      <view class="point p1"></view>
-      <view class="point p2"></view>
-      <view class="point p3"></view>
-      <view class="point p4"></view>
+
+    <empty-state wx:if="{{viewModel.calendarCells.length === 0}}" title="{{viewModel.emptyText}}" />
+
+    <view wx:else>
+      <view class="chart-wrap">
+        <canvas
+          wx:if="{{hasChartData}}"
+          class="trend-chart"
+          canvas-id="trendLineChart"
+          style="width: {{chartWidth}}px; height: {{chartHeight}}px;"
+        ></canvas>
+      </view>
+
+      <view class="calendar-grid">
+      <block wx:for="{{viewModel.calendarCells}}" wx:key="date">
+        <view class="calendar-cell {{item.statusClass}} {{item.isSelected ? 'selected' : ''}}" data-date="{{item.date}}" bindtap="onCalendarCellTap">
+          <text class="calendar-day">{{item.dayText}}</text>
+          <text class="calendar-value">{{item.valueText}}</text>
+        </view>
+      </block>
+      </view>
     </view>
-    <view class="legend">
-      <text><text class="legend-dot ink"></text>总奶量</text>
-      <text><text class="legend-dot mint"></text>建议区间</text>
-      <text><text class="legend-dot sky"></text>次数</text>
-    </view>
+
+    <view class="notice">趋势仅用于家庭记录和观察参考，不能替代医生判断。</view>
   </view>
 
-  <view class="panel">
-    <view class="panel-head">
-      <text class="panel-title">黄疸</text>
-      <text class="badge warn">无法判断</text>
-    </view>
-    <view class="chart jaundice">
-      <view class="danger-band"></view>
-      <view class="watch-band"></view>
-      <view class="line line-c"></view>
-      <view class="point p5"></view>
-      <view class="point p6"></view>
-      <view class="point p7"></view>
+  <view wx:if="{{detailModal.visible}}" class="modal-mask" catchtouchmove="noop" bindtap="onCloseDetailModal">
+    <view class="detail-dialog" catchtap="noop">
+      <view class="detail-head">
+        <view>
+          <text class="panel-title">{{detailModal.title}}</text>
+          <text class="label">{{detailModal.subtitle}}</text>
+        </view>
+        <text class="badge">{{detailModal.countText}}</text>
+      </view>
+
+      <view wx:if="{{detailModal.records.length === 0}}" class="detail-record">
+        <view>
+          <text class="detail-title">{{detailModal.emptyTitle}}</text>
+          <text class="detail-line">这一天还没有保存对应记录</text>
+        </view>
+      </view>
+
+      <scroll-view wx:else class="detail-list" scroll-y>
+        <block wx:for="{{detailModal.records}}" wx:key="id">
+          <view class="detail-record">
+            <view class="detail-copy">
+              <text class="detail-title">{{item.title}}</text>
+              <block wx:for="{{item.metaLines}}" wx:for-item="line" wx:key="*this">
+                <text class="detail-line">{{line}}</text>
+              </block>
+            </view>
+            <text wx:if="{{item.badgeText}}" class="badge {{item.badgeStatusClass === 'danger' ? 'danger' : item.badgeStatusClass === 'warn' ? 'warn' : ''}}">{{item.badgeText}}</text>
+          </view>
+        </block>
+      </scroll-view>
+
+      <button class="detail-close" bindtap="onCloseDetailModal">知道了</button>
     </view>
   </view>
 </view>

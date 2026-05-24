@@ -1,17 +1,18 @@
 .tabbar {
   position: fixed;
-  left: 32rpx;
-  right: 32rpx;
-  bottom: calc(24rpx + env(safe-area-inset-bottom));
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 99;
-  width: auto;
-  max-width: calc(750rpx - 64rpx);
-  height: 140rpx;
+  width: 100%;
+  max-width: 760rpx;
+  height: calc(128rpx + env(safe-area-inset-bottom));
   margin: 0 auto;
-  padding: 14rpx;
+  padding: 12rpx 32rpx calc(12rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
   border: 2rpx solid #DEDED5;
-  border-radius: 8rpx;
+  border-bottom: 0;
+  border-radius: 8rpx 8rpx 0 0;
   background: #FFFEF9;
   display: flex;
   align-items: center;
